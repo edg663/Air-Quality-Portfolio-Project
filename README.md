@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Air Quality Portfolio Project (Beijing 2010–2014)
 
 **项目说明 / Bilingual Project README**
@@ -132,3 +133,7 @@ WHL Based in 🇨🇦
 This project is for **educational and portfolio purposes**.  
 Copyright © 2025 edg663.  
 All rights reserved.
+=======
+# Air-Quality-Portfolio-Project
+This project analyzes the **Beijing air quality dataset (2010–2014)** using Python scientific computing tools. The workflow covers **data cleaning**, **exploratory analysis**, **visualization**, and **statistical modeling** of PM2.5 concentrations.
+>>>>>>> f45815631450f698a22214eea8a739543aaa56bb
