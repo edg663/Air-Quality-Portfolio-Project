@@ -1,8 +1,11 @@
 import pandas as pd
-import numpy as np
 from pathlib import Path
 
-path = Path(r"D:\air-quality-portfolio\data\cleaned\air_quality_step1.csv")
+# 自动获取当前脚本(src)的父目录(项目根目录)
+BASE_DIR = Path(__file__).resolve().parent.parent
+# 构造动态路径
+path = BASE_DIR / "data" / "cleaned" / "air_quality_clean.csv"
+
 df = pd.read_csv(path, index_col=0, parse_dates=True)
 
 print("✅ 文件读取成功！")

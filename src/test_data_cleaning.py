@@ -1,8 +1,11 @@
 import pandas as pd
 from pathlib import Path
 
-# 读取原始数据
-path = Path(r"D:\air-quality-portfolio\data\raw\PRSA_data_2010.1.1-2014.12.31.csv")
+# 自动获取当前脚本(src)的父目录(项目根目录)
+BASE_DIR = Path(__file__).resolve().parent.parent
+# 构造动态路径
+path = BASE_DIR / "data" / "cleaned" / "air_quality_clean.csv"
+
 df = pd.read_csv(path)
 
 # 🕒 合并时间列
