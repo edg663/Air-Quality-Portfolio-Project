@@ -21,8 +21,9 @@ print("索引类型:", type(df.index))
 print("前5行:")
 print(df.head())
 
-# 保存清洗后的版本（下一步还会继续改进）
-out_path = Path(r"D:\air-quality-portfolio\data\cleaned\air_quality_step1.csv")
+# 保存清洗后的版本
+out_path = BASE_DIR / "data" / "cleaned" / "air_quality_step1.csv"
 out_path.parent.mkdir(parents=True, exist_ok=True)
 df.to_csv(out_path)
 print("✅ 已保存:", out_path)
+
