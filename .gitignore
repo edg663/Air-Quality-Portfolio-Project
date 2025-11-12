@@ -1,0 +1,19 @@
+# Python cache
+__pycache__/
+*.pyc
+
+# Virtual Environment
+.venv/
+venv/
+env/
+
+# IDE settings (PyCharm / VSCode)
+.idea/
+.vscode/
+*.swp
+
+# Mac OS system files
+.DS_Store
+
+# Data (可选: 如果数据很大超过100MB，或者你想让别人跑代码生成数据，可以忽略 cleaned)
+# data/cleaned/
