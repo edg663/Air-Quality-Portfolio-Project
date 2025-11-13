@@ -1,151 +1,199 @@
-# Air Quality Portfolio Project (Beijing 2010–2014)
 
-**项目说明 / Bilingual Project README**
+# Beijing Air Quality Prediction (PM2.5)
 
----
-
-## Overview | 项目概述 
-
-This project analyzes the **Beijing air quality dataset (2010–2014)** using Python and Machine Learning.  
-The workflow covers **data cleaning**, **feature engineering (Lag features)**, **visualization**, and **predictive modeling** using **Random Forest Regressor**.
-
-本项目基于 Python 数据科学栈（Pandas / Scikit-learn / Matplotlib），  
-对北京 2010–2014 年的空气质量数据进行全流程分析。  
-项目不仅包含基础的清洗与探索，核心亮点在于通过 **特征工程（引入时间滞后特征）** 和 **随机森林模型**，  
-成功捕捉了空气质量的时间序列特性，显著提升了预测精度。
+**Time Series Forecasting & Machine Learning Portfolio**  
+*(北京空气质量预测项目 — 完整机器学习时间序列分析流程)*
 
 ---
 
-## Project Structure | 项目结构
+## 📘 Overview
+
+This project presents an end‑to‑end machine learning workflow for predicting **PM2.5 concentration levels** in Beijing using the **UCI PRSA dataset (2010–2014)**.  
+It highlights advanced **time‑series feature engineering**, tree‑based ensemble modeling, rigorous **TimeSeries Cross‑Validation**, and visualization-driven interpretation.
+
+This project was developed as part of an academic portfolio for research and upper‑year project applications.
+
+---
+
+## 🚀 Key Features (What Makes This Project Strong)
+
+### 🔹 1. Advanced Time‑Series Feature Engineering  
+Implemented in `src/feature_engineering.py`:
+
+- **Lag Features** (`pm25_lag1`, `pm25_lag24`) → capture short-term & daily temporal dependence  
+- **Rolling Window Features** → 24‑hour smoothed trends  
+- **Cyclical Encoding**  
+  Converts hour / month / weekday into sine‑cosine components to keep continuity  
+  (`23 → 0` becomes close on a circle)  
+- **Meteorological Historical Lags** for temperature, humidity, wind speed…
+
+### 🔹 2. Robust Ensemble Modeling  
+Implemented in `modeling_rf.py` & `modeling_xgb.py`:
+
+- **Random Forest Regressor**
+- **XGBoost Regressor** (best model)
+- Trains with **TimeSeriesSplit** (prevents data leakage)
+
+### 🔹 3. Clear Interpretation & Analysis
+
+- Feature Importance (built‑in RF & XGB)
+- Actual vs Predicted line charts
+- Residual distribution analysis
+
+---
+
+## 📂 Project Structure
 
 ```
-
-air-quality-portfolio/
+Air-Quality-Portfolio-Project/
 │
 ├── data/
-│   ├── raw/               # 原始数据（UCI PRSA dataset）
-│   └── cleaned/           # 清洗后的数据 & 特征工程后的数据
+│   ├── raw/
+│   └── cleaned/
+│
+├── images/                 # Plots (feature importance, predictions)
+├── models/                 # Saved trained models
 │
 ├── notebooks/
-│   ├── AirQuality_Report_CNfont.ipynb   # 交互式分析报告
+│   └── AirQuality_Report_CNfont_Improved.ipynb
 │
 ├── src/
-│   ├── test_data_cleaning.py     # 步骤1: 数据清洗
-│   ├── feature_engineering.py    # 步骤2: 特征工程 (Lag Features) [核心]
-│   ├── modeling_rf.py            # 步骤3: 随机森林建模 & 评估 [核心]
-│   ├── visualization_pm25.py     # 可视化: 时间序列与趋势图
-│   ├── analysis_basic.py         # 基础描述统计
-│   ├── check_missing.py          # 缺失值检测
-│   ├── modeling_pm25_multivar.py # (旧) 线性回归基准模型
+│   ├── test_data_cleaning.py
+│   ├── feature_engineering.py
+│   ├── modeling_rf.py
+│   ├── modeling_xgb.py
+│   └── visualization_pm25.py
 │
-├── images/                       # 存放结果图表
-├── README.md
-└── requirements.txt              # 项目依赖库
-
+├── requirements.txt
+└── README.md
 ```
 
 ---
 
-## Dependencies | 环境依赖
+## 🛠 Tech Stack
 
-Python 版本：`>=3.9`
+- **Python 3.9+**
+- Pandas / NumPy
+- scikit‑learn
+- XGBoost
+- Matplotlib / Seaborn
+- Jupyter Notebook
 
-**安装依赖 / Install Dependencies:**
-```bash
+---
+
+## ⚙️ Methodology
+
+### 1. Data Cleaning  
+File: `test_data_cleaning.py`
+
+- Linear interpolation for missing timestamps  
+- Drop incomplete rows  
+- Basic quality control checks
+
+---
+
+### 2. Feature Engineering  
+File: `feature_engineering.py`
+
+#### ✔ Lag Features  
+Captures autocorrelation patterns:
+
+```
+pm25_lag1   # previous hour
+pm25_lag24  # previous day same hour
+```
+
+#### ✔ Rolling Window Features  
+Smooths noisy short-term variance.
+
+#### ✔ Cyclical Encoding  
+Example (Hour → sin/cos):
+
+```python
+df["hour_sin"] = np.sin(2 * np.pi * df["hour"] / 24)
+df["hour_cos"] = np.cos(2 * np.pi * df["hour"] / 24)
+```
+
+Ensures 23:00 and 00:00 remain close in encoded feature space.
+
+---
+
+### 3. Model Training & Evaluation  
+Files:  
+- `modeling_rf.py`  
+- `modeling_xgb.py`
+
+#### Validation:
+Uses **5‑fold TimeSeriesSplit** to ensure no future leakage.
+
+#### Metrics:
+- RMSE
+- MAE
+- R² score
+
+---
+
+## 📊 Performance Summary
+
+| Model | Feature Set | Test R² | Notes |
+|------|-------------|---------|-------|
+| **Linear Regression** | Weather only | ~0.11 | Strong underfitting |
+| **Quadratic Temp Model** | Weather + Temp² | ~0.12 | Very small gain |
+| **Random Forest** | Lags + Cyclical | **~0.94** | Strong performance |
+| **XGBoost** | Lags + Cyclical | **~0.945** | Best model |
+
+---
+
+## 📈 Key Plots (in `images/`)
+
+- Time‑series prediction vs actual PM2.5  
+- Residual distribution  
+- Model comparison  
+- Feature importance (RF & XGB)
+
+---
+
+## 🧪 Quick Start
+
+### Step 1 — Install dependencies  
+```
 pip install -r requirements.txt
 ```
 
-*(包含: numpy, pandas, matplotlib, scikit-learn, seaborn, jupyter)*
-
------
-
-## Usage | 使用方法 ⚙️
-
-### 1. 数据准备与清洗 (Data Preparation)
-
-```bash
-# 下载并清洗原始数据
-python src/test.py
+### Step 2 — Clean data  
+```
 python src/test_data_cleaning.py
 ```
 
-### 2. 特征工程 (Feature Engineering) - **关键步骤**
-
-构造时间特征（Hour, Month）与滞后特征（Lag Features, Rolling Mean）。
-
-```bash
+### Step 3 — Generate engineered features  
+```
 python src/feature_engineering.py
 ```
 
-*输出: `data/cleaned/air_quality_features.csv`*
-
-### 3. 模型训练与评估 (Model Training)
-
-使用随机森林进行训练，并输出 R² 分数与特征重要性图。
-
-```bash
+### Step 4 — Train baseline + ensemble models  
+```
 python src/modeling_rf.py
 ```
 
-### 4. 探索性分析 (EDA & Visualization)
-
-```bash
-python src/visualization_pm25.py
+### Step 5 — Train production XGBoost model  
 ```
-
------
-
-## Results | 分析结果 
-
-通过引入特征工程和机器学习模型，预测准确度实现了质的飞跃：
-
-| 模型 (Model) | 特征集 (Features) | R² (Test Score) | 效果评价 |
-| :--- | :--- | :--- | :--- |
-| **Linear Regression** | TEMP, PRES, Iws | **0.1141** | 欠拟合，无法捕捉非线性关系 |
-| **Quadratic Temp** | TEMP, TEMP², PRES, Iws | **0.1154** | 略有提升，但仍不足 |
-| **Random Forest**  | **+ Lag Features (t-1, t-24)** | **~0.9435** | **极好，完美捕捉波动趋势** |
-
-**关键发现 (Key Insights)：**
-
-1.  **时间惯性 (Temporal Inertia)**: 空气质量具有极强的自相关性。引入 `pm25_lag1`（上一小时浓度）是提升模型性能的最关键因素。
-2.  **模型优势**: 随机森林 (Random Forest) 能够有效处理气象变量（风速、气压）与污染物之间的非线性交互作用。
-
------
-
-## Visualization | 图表示例 
-
-#### 1. 预测结果对比 (Actual vs Predicted)
-
-模型能够准确预测 PM2.5 的剧烈波动（红线完美跟随黑线）。
-<img src="./images/prediction_result.png" width="600" alt="如果未显示，请运行 modeling_rf.py 生成图片">
-
-#### 2. 特征重要性 (Feature Importance)
-
-<img src="./images/feature_importance.png" width="600" alt="如果未显示，请运行 modeling_rf.py 生成图片">
-
------
-
-## Next Steps | 后续方向 
-
-  - **超参数调优**: 使用 GridSearchCV 对随机森林的 `n_estimators` 和 `max_depth` 进行精细调整。
-  - **深度学习**: 尝试 LSTM (长短期记忆网络) 处理更长的时间序列依赖。
-  - **部署**: 使用 Flask/Streamlit 将模型封装为实时预测 API。
-
------
-
-## Author | 作者
-
-**edg663** WHL Based in 🇨🇦
-
------
-
-## License | 许可协议
-
-This project is for **educational and portfolio purposes**.  
-Copyright © 2025 edg663.  
-All rights reserved.
-
+python src/modeling_xgb.py
+```
 
 ---
 
-> 🧠 **Tip:** 本项目已通过 Jupyter Notebook 全流程可复现，建议先运行 `AirQuality_Report_CNfont.ipynb` 进行交互式探索。
+## 🔮 Future Improvements
+
+- Hyperparameter tuning (Optuna / GridSearchCV)
+- Add LightGBM & CatBoost
+- Train deep learning models (LSTM / GRU)
+- Deploy a Streamlit dashboard
+- Integrate SHAP for advanced model explainability
+
+---
+
+## 👤 Author
+
+**edg663**  
+Educational Portfolio Project  
+GitHub: https://github.com/edg663/Air-Quality-Portfolio-Project
