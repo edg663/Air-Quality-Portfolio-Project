@@ -57,10 +57,17 @@ def create_features():
         df['PRES_lag6'] = df['PRES'].shift(6)  # 6小时前气压
 
     # =========================
-    # 5. 去除因 shift/rolling 产生的 NaN
+    # 5. 线性插值填充缺失值
     # =========================
     print(f"创建特征前数据行数: {len(df)}")
+
+    # 对数值型特征进行线性插值填充
+    numeric_cols = df.select_dtypes(include=[np.number]).columns
+    df[numeric_cols] = df[numeric_cols].interpolate(method='linear', limit_direction='both', limit=6)
+
+    # 删除依然包含 NaN 的行 (如头尾无法插值的缺失)
     df = df.dropna()
+
     print(f"去除NaN后数据行数: {len(df)}")
 
     # =========================
